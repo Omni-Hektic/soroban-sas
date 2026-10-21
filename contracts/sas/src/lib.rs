@@ -2200,3 +2200,5 @@ mod test_round_trip;
 mod test_timestamp;
 #[cfg(test)]
 mod verify_batch_test;
+#[cfg(test)]
+mod test_security_replay;
