@@ -101,6 +101,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   validator and `validate_schema_syntax` both replay the shared golden
   vectors in `packages/soroban-sas-common/test_vectors/schema_syntax.tsv`.
   Built and tested in the *Developer Tooling* workflow. (#346)
+- Nullifier set management in the ZK verifier contract. Checking and
+  recording a nullifier is now a single atomic step: a nullifier is spent
+  only when the whole proof verification succeeds, so a rejected proof never
+  burns its nullifier, and a nullifier that was already spent is rejected
+  with `ZKError::NullifierSpent` (the contract error type `ZkVerifierError`
+  is aliased as `ZKError`). Nullifier records are renewed with the contract
+  instance's own TTL policy, so a spent nullifier never expires before the
+  instance that guards it. The new `are_nullifiers_used` query lets
+  off-chain clients check a whole batch of nullifiers with a single contract
+  call instead of one call per nullifier. (#547)
+- WebAssembly build of the Rust SDK for serverless edge runtimes
+  (`wasm32-unknown-unknown`). The new `wasm` feature replaces the native
+  `ureq` transport with a `web-sys` `fetch` implementation, so RPC calls are
+  awaited through the runtime's global `fetch` instead of blocking the event
+  loop; the synchronous RPC methods are wasm-only errors that point at their
+  `*_async` counterparts. Host-only APIs (`SASClient`, the `Val` bridge
+  helpers) are compiled out for wasm, and the new
+  `soroban_sas_sdk::attestation` module decodes attestations straight from
+  the XDR wire format into a JSON-serializable `AttestationRecord`, so edge
+  runtimes can read attestations without a Soroban host environment.
+  `examples/cloudflare-worker` is a deployable Worker template that answers
+  `GET /attestation/{uid}` from a Soroban RPC node, `docs/edge-runtime.md`
+  documents the feature and the deployment steps, and CI keeps the edge build
+  working through the new `wasm-sdk` job. (#553)
 - `soroban-sas schema wizard`: interactive schema registration that prompts
   for a name, field-by-field definitions, revocability, an optional resolver
   address, and a metadata URI, validating every answer as it is typed

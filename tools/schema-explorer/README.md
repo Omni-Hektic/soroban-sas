@@ -21,6 +21,13 @@ Browsing remains read-only. The designer supports explicit Testnet registration 
   secure deep-link URLs for in-person checks, physical event badges, and ticketing.
   Scanning opens a high-contrast mobile verification screen verifying directly against
   Soroban RPC with offline Ed25519 signature fallback. Exportable as SVG and PNG.
+- **Live attestation feed**: streams recent attestations as they are
+  emitted, with instant search by Attestation UID, Schema UID, recipient or
+  attester. Matches are deep-linkable via the page URL, and each result
+  shows an active / expired / revoked status tag reflecting current on-chain
+  state.
+- **Payload inspector**: opens any attestation's raw XDR and decoded JSON
+  payload side-by-side.
 - **Demo data**: "Use demo data" (or `?demo=1`) loads built-in fixtures with
   no network access, so you can try the UI without deploying anything.
 
@@ -63,6 +70,7 @@ can serve it.
 | `src/registry.ts` | `RegistryReader` (typed contract reads) and `RpcContractCaller` (Soroban RPC simulation) |
 | `src/config.ts` | Network presets, connection validation, shareable query strings |
 | `src/fixtures.ts` | Demo data, and `FixtureCaller`, an in-memory registry with the contract's encoding and pagination rules |
+| `src/feed.ts` | Live attestation feed: polling, search filtering, status derivation and URL deep-linking |
 | `src/view.ts`, `src/app.ts` | DOM rendering and page wiring |
 | `src/qrcode.ts` | Zero-dependency QR Code generator, SVG and PNG export |
 | `src/attestation.ts` | Deep-link builder/parser, Soroban RPC verification, and offline cryptographic proof |
